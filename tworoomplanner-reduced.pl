@@ -89,14 +89,7 @@ move(
 /* run commands */
 go(S, G) :- plan(S, G, [S], []).
 
-test :- go(
-           [handempty, ontable(b), ontable(c), on(a, b), clear(c), clear(a)],
-	       [handempty, ontable(c), on(a,b), on(b, c), clear(a)]
-          ).
-
-test2 :- go(
-            [handempty, ontable(b), ontable(c), on(a, b), clear(c), clear(a)],
-            [handempty, ontable(a), ontable(b), on(c, b), clear(a), clear(c)]
-           ).
+test :- go([handempty, ontable(b,roomlocation1), on(a, b, roomlocation1), clear(a), roomlocation1],
+            [handempty, ontable(b,roomlocation2), on(a, b, roomlocation2), clear(a), roomlocation1]).
 
 
