@@ -14,7 +14,7 @@
 :- module( planner,
         [
             plan/4,change_state/3,conditions_met/2,member_state/2,
-            move/3,go/2,test/0,test2/0
+            move/3,go/2,test/0
         ]).
 
 /* utils */
@@ -52,50 +52,50 @@ member_state(S, [_|T]) :- member_state(S, T).
 /* move types */
 move(
      pickup(X),
-     [handempty, clear(X), on(X, Y, Z), roomlocation1],
-     [del(handempty), del(clear(X)), del(on(X, Y, Z)), add(clear(Y)), add(holding(X))]
+     [handempty, clear(X), on(X, Y, roomlocation1), roomlocation1],
+     [del(handempty), del(clear(X)), del(on(X, Y, roomlocation1)), add(clear(Y)), add(holding(X))]
     ).
 
 move(
      pickup(X),
-     [handempty, clear(X), on(X, Y, Z), roomlocation2],
-     [del(handempty), del(clear(X)), del(on(X, Y, Z)), add(clear(Y)), add(holding(X))]
+     [handempty, clear(X), on(X, Y, roomlocation2), roomlocation2],
+     [del(handempty), del(clear(X)), del(on(X, Y, roomlocation2)), add(clear(Y)), add(holding(X))]
     ).
 
 move(
      pickup(X),
-     [handempty, clear(X), ontable(X, Z), roomlocation1],
-     [del(handempty), del(clear(X)), del(ontable(X, Z)), add(holding(X))]
+     [handempty, clear(X), ontable(X, roomlocation1), roomlocation1],
+     [del(handempty), del(clear(X)), del(ontable(X, roomlocation1)), add(holding(X))]
     ).
 
 move(
      pickup(X),
-     [handempty, clear(X), ontable(X, Z), roomlocation2],
-     [del(handempty), del(clear(X)), del(ontable(X, Z)), add(holding(X))]
+     [handempty, clear(X), ontable(X, roomlocation2), roomlocation2],
+     [del(handempty), del(clear(X)), del(ontable(X, roomlocation2)), add(holding(X))]
     ).
 
 move(
      putdown(X),
      [holding(X), roomlocation1],
-     [del(holding(X)), add(ontable(X, Z)), add(clear(X)), add(handempty)]
+     [del(holding(X)), add(ontable(X, roomlocation1)), add(clear(X)), add(handempty)]
     ).
 
 move(
      putdown(X),
      [holding(X), roomlocation2],
-     [del(holding(X)), add(ontable(X, Z)), add(clear(X)), add(handempty)]
+     [del(holding(X)), add(ontable(X, roomlocation2)), add(clear(X)), add(handempty)]
     ).
 
 move(
-     stack(X, Y, Z),
+     stack(X, Y),
      [holding(X), clear(Y), roomlocation1],
-     [del(holding(X)), del(clear(Y)), add(handempty), add(on(X, Y, Z)), add(clear(X))]
+     [del(holding(X)), del(clear(Y)), add(handempty), add(on(X, Y, roomlocation1)), add(clear(X))]
     ).
 
 move(
-     stack(X, Y, Z),
+     stack(X, Y),
      [holding(X), clear(Y), roomlocation2],
-     [del(holding(X)), del(clear(Y)), add(handempty), add(on(X, Y, Z)), add(clear(X))]
+     [del(holding(X)), del(clear(Y)), add(handempty), add(on(X, Y, roomlocation2)), add(clear(X))]
     ).
 
 move(
@@ -113,14 +113,7 @@ move(
 /* run commands */
 go(S, G) :- plan(S, G, [S], []).
 
-test :- go(
-           [handempty, ontable(b), ontable(c), on(a, b), clear(c), clear(a)],
-	       [handempty, ontable(c), on(a,b), on(b, c), clear(a)]
-          ).
-
-test2 :- go(
-            [handempty, ontable(b), ontable(c), on(a, b), clear(c), clear(a)],
-            [handempty, ontable(a), ontable(b), on(c, b), clear(a), clear(c)]
-           ).
+test :- go([handempty, ontable(b,roomlocation1), on(a, b, roomlocation1), clear(a), roomlocation1],
+            [handempty, ontable(b,roomlocation2), on(a, b, roomlocation2), clear(a), roomlocation1]).
 
 
