@@ -14,7 +14,7 @@
 :- module( planner,
         [
             plan/4,change_state/3,conditions_met/2,member_state/2,
-            move/3,go/2,test/0,test2/0
+            move/3,go/2,test/0
         ]).
 
 /* utils */
@@ -64,12 +64,12 @@ move(
 
 move(
      putdown(X),
-     [holding(X), roomlocation(X)],
-     [del(holding(X)), add(ontable(X, Z)), add(clear(Z)), add(handempty)]
+     [holding(X), roomlocation(Z)],
+     [del(holding(X)), add(ontable(X, Z)), add(clear(X)), add(handempty)]
     ).
 
 move(
-     stack(X, Y, Z),
+     stack(X, Y),
      [holding(X), clear(Y), roomlocation(Z)],
      [del(holding(X)), del(clear(Y)), add(handempty), add(on(X, Y, Z)), add(clear(X))]
     ).
