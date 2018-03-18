@@ -52,26 +52,62 @@ member_state(S, [_|T]) :- member_state(S, T).
 /* move types */
 move(
      pickup(X),
-     [handempty, clear(X), on(X, Y)],
-     [del(handempty), del(clear(X)), del(on(X, Y)), add(clear(Y)), add(holding(X))]
+     [handempty, clear(X), on(X, Y, Z), roomlocation1],
+     [del(handempty), del(clear(X)), del(on(X, Y, Z)), add(clear(Y)), add(holding(X))]
     ).
 
 move(
      pickup(X),
-     [handempty, clear(X), ontable(X)],
-     [del(handempty), del(clear(X)), del(ontable(X)), add(holding(X))]
+     [handempty, clear(X), on(X, Y, Z), roomlocation2],
+     [del(handempty), del(clear(X)), del(on(X, Y, Z)), add(clear(Y)), add(holding(X))]
+    ).
+
+move(
+     pickup(X),
+     [handempty, clear(X), ontable(X, Z), roomlocation1],
+     [del(handempty), del(clear(X)), del(ontable(X, Z)), add(holding(X))]
+    ).
+
+move(
+     pickup(X),
+     [handempty, clear(X), ontable(X, Z), roomlocation2],
+     [del(handempty), del(clear(X)), del(ontable(X, Z)), add(holding(X))]
     ).
 
 move(
      putdown(X),
-     [holding(X)],
-     [del(holding(X)), add(ontable(X)), add(clear(X)), add(handempty)]
+     [holding(X), roomlocation1],
+     [del(holding(X)), add(ontable(X, Z)), add(clear(X)), add(handempty)]
     ).
 
 move(
-     stack(X, Y),
-     [holding(X), clear(Y)],
-     [del(holding(X)), del(clear(Y)), add(handempty), add(on(X, Y)), add(clear(X))]
+     putdown(X),
+     [holding(X), roomlocation2],
+     [del(holding(X)), add(ontable(X, Z)), add(clear(X)), add(handempty)]
+    ).
+
+move(
+     stack(X, Y, Z),
+     [holding(X), clear(Y), roomlocation1],
+     [del(holding(X)), del(clear(Y)), add(handempty), add(on(X, Y, Z)), add(clear(X))]
+    ).
+
+move(
+     stack(X, Y, Z),
+     [holding(X), clear(Y), roomlocation2],
+     [del(holding(X)), del(clear(Y)), add(handempty), add(on(X, Y, Z)), add(clear(X))]
+    ).
+
+move(
+     goroom1,
+     [roomlocation2],
+     [add(roomlocation1), del(roomlocation2)]
+    ).
+
+move(
+     goroom2,
+     [roomlocation1],
+     [add(roomlocation2), del(roomlocation1)]
     ).
 
 /* run commands */

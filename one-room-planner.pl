@@ -60,3 +60,4 @@ conditions_met(P, S) :- subset(P, S).
 %
 
 
+
