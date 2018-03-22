@@ -14,7 +14,8 @@
 :- module( planner,
         [
             plan/4,change_state/3,conditions_met/2,member_state/2,
-            move/3,go/2,test/0
+            move/3,go/2,testTwoRoomRubric/0,testSingleRoomSlides/0,
+            testTwoRoomSlides/0
         ]).
 
 /* utils */
@@ -32,7 +33,6 @@ plan(State, Goal, Been_list, Moves) :- move(Name, Preconditions, Actions),
                                        stack(Child_state, Been_list, New_been_list),
                                        stack(Name, Moves, New_moves),
                                        plan(Child_state, Goal, New_been_list, New_moves),!.
-
 
 /* change state */
 change_state(S, [], S).
@@ -113,7 +113,19 @@ move(
 /* run commands */
 go(S, G) :- plan(S, G, [S], []).
 
-test :- go([handempty, ontable(b,roomlocation1), on(a, b, roomlocation1), clear(a), roomlocation1],
-            [handempty, ontable(b,roomlocation2), on(a, b, roomlocation2), clear(a), roomlocation1]).
+testSingleRoomSlides :- go(
+            [handempty, ontable(c,roomlocation1), ontable(b,roomlocation1), on(a, b, roomlocation1), clear(a), clear(c), roomlocation1],
+            [handempty, ontable(c,roomlocation1), on(b, c,roomlocation1), on(a, b,roomlocation1), clear(a), roomlocation1]
+                          ).
+
+testTwoRoomRubric :- go(
+            [handempty, ontable(b,roomlocation1), on(a, b, roomlocation1), clear(a), roomlocation1],
+            [handempty, ontable(b,roomlocation2), on(a, b, roomlocation2), clear(a), roomlocation1]
+          ).
+
+testTwoRoomSlides :- go(
+            [handempty, ontable(b,roomlocation1), on(a, b, roomlocation1), clear(a), ontable(c,roomlocation1), clear(c), roomlocation1],
+            [handempty, ontable(b,roomlocation2), on(c, b, roomlocation2), clear(a), on(a, c, roomlocation2), roomlocation1]
+          ).
 
 
