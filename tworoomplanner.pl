@@ -14,7 +14,7 @@
 :- module( planner,
         [
             plan/4,change_state/3,conditions_met/2,member_state/2,
-            move/3,go/2,testTwoRoomRubric/0,testSingleRoomSlides/0,
+            move/3,go/2,testSingleRoomSlides/0,
             testTwoRoomSlides/0
         ]).
 
@@ -52,50 +52,50 @@ member_state(S, [_|T]) :- member_state(S, T).
 /* move types */
 move(
      pickup(X),
-     [handempty, clear(X), on(X, Y, roomlocation1), roomlocation1],
-     [del(handempty), del(clear(X)), del(on(X, Y, roomlocation1)), add(clear(Y)), add(holding(X))]
+     [handempty, clear(X, roomlocation1), on(X, Y, roomlocation1), roomlocation1],
+     [del(handempty), del(clear(X, roomlocation1)), del(on(X, Y, roomlocation1)), add(clear(Y, roomlocation1)), add(holding(X))]
     ).
 
 move(
      pickup(X),
-     [handempty, clear(X), on(X, Y, roomlocation2), roomlocation2],
-     [del(handempty), del(clear(X)), del(on(X, Y, roomlocation2)), add(clear(Y)), add(holding(X))]
+     [handempty, clear(X, roomlocation2), on(X, Y, roomlocation2), roomlocation2],
+     [del(handempty), del(clear(X, roomlocation2)), del(on(X, Y, roomlocation2)), add(clear(Y, roomlocation2)), add(holding(X))]
     ).
 
 move(
      pickup(X),
-     [handempty, clear(X), ontable(X, roomlocation1), roomlocation1],
-     [del(handempty), del(clear(X)), del(ontable(X, roomlocation1)), add(holding(X))]
+     [handempty, clear(X, roomlocation1), ontable(X, roomlocation1), roomlocation1],
+     [del(handempty), del(clear(X, roomlocation1)), del(ontable(X, roomlocation1)), add(holding(X))]
     ).
 
 move(
      pickup(X),
-     [handempty, clear(X), ontable(X, roomlocation2), roomlocation2],
-     [del(handempty), del(clear(X)), del(ontable(X, roomlocation2)), add(holding(X))]
+     [handempty, clear(X, roomlocation2), ontable(X, roomlocation2), roomlocation2],
+     [del(handempty), del(clear(X, roomlocation2)), del(ontable(X, roomlocation2)), add(holding(X))]
     ).
 
 move(
      putdown(X),
      [holding(X), roomlocation1],
-     [del(holding(X)), add(ontable(X, roomlocation1)), add(clear(X)), add(handempty)]
+     [del(holding(X)), add(ontable(X, roomlocation1)), add(clear(X, roomlocation1)), add(handempty)]
     ).
 
 move(
      putdown(X),
      [holding(X), roomlocation2],
-     [del(holding(X)), add(ontable(X, roomlocation2)), add(clear(X)), add(handempty)]
+     [del(holding(X)), add(ontable(X, roomlocation2)), add(clear(X, roomlocation2)), add(handempty)]
     ).
 
 move(
-     stack(X, Y),
-     [holding(X), clear(Y), roomlocation1],
-     [del(holding(X)), del(clear(Y)), add(handempty), add(on(X, Y, roomlocation1)), add(clear(X))]
+     stack(X, Y, roomlocation1),
+     [holding(X), clear(Y, roomlocation1), roomlocation1],
+     [del(holding(X)), del(clear(Y, roomlocation1)), add(handempty), add(on(X, Y, roomlocation1)), add(clear(X, roomlocation1))]
     ).
 
 move(
-     stack(X, Y),
-     [holding(X), clear(Y), roomlocation2],
-     [del(holding(X)), del(clear(Y)), add(handempty), add(on(X, Y, roomlocation2)), add(clear(X))]
+     stack(X, Y, roomlocation2),
+     [holding(X), clear(Y, roomlocation2), roomlocation2],
+     [del(holding(X)), del(clear(Y, roomlocation2)), add(handempty), add(on(X, Y, roomlocation2)), add(clear(X, roomlocation2))]
     ).
 
 move(
@@ -114,18 +114,6 @@ move(
 go(S, G) :- plan(S, G, [S], []).
 
 testSingleRoomSlides :- go(
-            [handempty, ontable(c,roomlocation1), ontable(b,roomlocation1), on(a, b, roomlocation1), clear(a), clear(c), roomlocation1],
-            [handempty, ontable(c,roomlocation1), on(b, c,roomlocation1), on(a, b,roomlocation1), clear(a), roomlocation1]
+            [handempty, ontable(c,roomlocation1), ontable(b,roomlocation1), on(a, b, roomlocation1), clear(a, roomlocation1), clear(c, roomlocation1), roomlocation1],
+            [handempty, ontable(c,roomlocation1), on(b, c,roomlocation1), on(a, b,roomlocation1), clear(a, roomlocation1), roomlocation1]
                           ).
-
-testTwoRoomRubric :- go(
-            [handempty, ontable(b,roomlocation1), on(a, b, roomlocation1), clear(a), roomlocation1],
-            [handempty, ontable(b,roomlocation2), on(a, b, roomlocation2), clear(a), roomlocation1]
-          ).
-
-testTwoRoomSlides :- go(
-            [handempty, ontable(b,roomlocation1), on(a, b, roomlocation1), clear(a), ontable(c,roomlocation1), clear(c), roomlocation1],
-            [handempty, ontable(b,roomlocation2), on(c, b, roomlocation2), clear(a), on(a, c, roomlocation2), roomlocation1]
-          ).
-
-

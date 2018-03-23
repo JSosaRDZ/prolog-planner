@@ -14,7 +14,7 @@
 :- module( planner,
         [
             plan/4,change_state/3,conditions_met/2,member_state/2,
-            move/3,go/2,test/0
+            move/3,go/2,test/0,testTwoRoomSlides/0
         ]).
 
 /* utils */
@@ -51,27 +51,27 @@ member_state(S, [_|T]) :- member_state(S, T).
 
 /* move types */
 move(
-     pickup(X),
-     [handempty, clear(X), on(X, Y, Z), roomlocation(Z)],
-     [del(handempty), del(clear(X)), del(on(X, Y, Z)), add(clear(Y)), add(holding(X))]
+     pickup(X, Z),
+     [handempty, clear(X, Z), on(X, Y, Z), roomlocation(Z)],
+     [del(handempty), del(clear(X, Z)), del(on(X, Y, Z)), add(clear(Y, Z)), add(holding(X))]
     ).
 
 move(
-     pickup(X),
-     [handempty, clear(X), ontable(X, Z), roomlocation(Z)],
-     [del(handempty), del(clear(X)), del(ontable(X, Z)), add(holding(X))]
+     pickup(X, Z),
+     [handempty, clear(X, Z), ontable(X, Z), roomlocation(Z)],
+     [del(handempty), del(clear(X, Z)), del(ontable(X, Z)), add(holding(X))]
     ).
 
 move(
-     putdown(X),
+     putdown(X, Z),
      [holding(X), roomlocation(Z)],
-     [del(holding(X)), add(ontable(X, Z)), add(clear(X)), add(handempty)]
+     [del(holding(X)), add(ontable(X, Z)), add(clear(X, Z)), add(handempty)]
     ).
 
 move(
-     stack(X, Y),
-     [holding(X), clear(Y), roomlocation(Z)],
-     [del(holding(X)), del(clear(Y)), add(handempty), add(on(X, Y, Z)), add(clear(X))]
+     stack(X, Y, Z),
+     [holding(X), clear(Y, Z), roomlocation(Z)],
+     [del(holding(X)), del(clear(Y, Z)), add(handempty), add(on(X, Y, Z)), add(clear(X, Z))]
     ).
 
 move(
@@ -89,7 +89,7 @@ move(
 /* run commands */
 go(S, G) :- plan(S, G, [S], []).
 
-test :- go([handempty, ontable(b, 1), on(a, b, 1), clear(a), roomlocation(1)],
-            [handempty, ontable(b,2), on(a, b, 2), clear(a), roomlocation(1)]).
-
-
+testTwoRoomSlides :- go(
+            [handempty, ontable(b,1), on(a, b, 1), clear(a, 1), ontable(c,1), clear(c, 1), roomlocation(1)],
+            [handempty, ontable(c,1), on(b, c, 1), on(a, b, 1), clear(a, 1), roomlocation(1)]
+          ).
