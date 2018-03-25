@@ -9,8 +9,8 @@
 /* module */
 :- module( planner,
         [
-            plan/4, change_state/3, conditions_met/2, member_state/2,
-            move/3, go/2, test1/0, test2/0, test3/0
+            plan/4,change_state/3,conditions_met/2,member_state/2,
+            move/3,go/2, test1/0, test2/0, test3/0, test4/0
         ]).
 
 /* utils */
@@ -28,6 +28,7 @@ plan(State, Goal, Been_list, Moves) :- move(Name, Preconditions, Actions),
                                        stack(Child_state, Been_list, New_been_list),
                                        stack(Name, Moves, New_moves),
                                        plan(Child_state, Goal, New_been_list, New_moves),!.
+
 
 /* change state */
 change_state(S, [], S).
@@ -47,69 +48,45 @@ member_state(S, [_|T]) :- member_state(S, T).
 /* move types */
 move(
      pickup(X),
-     [handempty, clear(X, roomlocation1), on(X, Y, roomlocation1), roomlocation1],
-     [del(handempty), del(clear(X, roomlocation1)), del(on(X, Y, roomlocation1)), add(clear(Y, roomlocation1)), add(holding(X))]
+     [handempty, clear(X, Z), on(X, Y, Z), roomlocation(Z)],
+     [del(handempty), del(clear(X, Z)), del(on(X, Y, Z)), add(clear(Y, Z)), add(holding(X))]
     ).
 
 move(
      pickup(X),
-     [handempty, clear(X, roomlocation2), on(X, Y, roomlocation2), roomlocation2],
-     [del(handempty), del(clear(X, roomlocation2)), del(on(X, Y, roomlocation2)), add(clear(Y, roomlocation2)), add(holding(X))]
-    ).
-
-move(
-     pickup(X),
-     [handempty, clear(X, roomlocation1), ontable(X, roomlocation1), roomlocation1],
-     [del(handempty), del(clear(X, roomlocation1)), del(ontable(X, roomlocation1)), add(holding(X))]
-    ).
-
-move(
-     pickup(X),
-     [handempty, clear(X, roomlocation2), ontable(X, roomlocation2), roomlocation2],
-     [del(handempty), del(clear(X, roomlocation2)), del(ontable(X, roomlocation2)), add(holding(X))]
+     [handempty, clear(X, Z), ontable(X, Z), roomlocation(Z)],
+     [del(handempty), del(clear(X, Z)), del(ontable(X, Z)), add(holding(X))]
     ).
 
 move(
      putdown(X),
-     [holding(X), roomlocation1],
-     [del(holding(X)), add(ontable(X, roomlocation1)), add(clear(X, roomlocation1)), add(handempty)]
-    ).
-
-move(
-     putdown(X),
-     [holding(X), roomlocation2],
-     [del(holding(X)), add(ontable(X, roomlocation2)), add(clear(X, roomlocation2)), add(handempty)]
+     [holding(X), roomlocation(Z)],
+     [del(holding(X)), add(ontable(X, Z)), add(clear(X, Z)), add(handempty)]
     ).
 
 move(
      stack(X, Y),
-     [holding(X), clear(Y, roomlocation1), roomlocation1],
-     [del(holding(X)), del(clear(Y, roomlocation1)), add(handempty), add(on(X, Y, roomlocation1)), add(clear(X, roomlocation1))]
-    ).
-
-move(
-     stack(X, Y),
-     [holding(X), clear(Y, roomlocation2), roomlocation2],
-     [del(holding(X)), del(clear(Y, roomlocation2)), add(handempty), add(on(X, Y, roomlocation2)), add(clear(X, roomlocation2))]
+     [holding(X), clear(Y, Z), roomlocation(Z)],
+     [del(holding(X)), del(clear(Y, Z)), add(handempty), add(on(X, Y, Z)), add(clear(X, Z))]
     ).
 
 move(
      goroom1,
-     [roomlocation2],
-     [add(roomlocation1), del(roomlocation2)]
+     [roomlocation(2)],
+     [add(roomlocation(1)), del(roomlocation(2))]
     ).
 
 move(
      goroom2,
-     [roomlocation1],
-     [add(roomlocation2), del(roomlocation1)]
+     [roomlocation(1)],
+     [add(roomlocation(2)), del(roomlocation(1))]
     ).
 
 /* run commands */
 go(S, G) :- plan(S, G, [S], []).
 
 /**
-* test1 from Program 2 Requirements section.
+* test1 from Program 2 Requirements section: 1-room problem.
 * test1 is a 0-arity test predicate.
 * The start state is: block A, B, and C and robotic arm are all in Room 1.
 *                     Block B and C on the table and block A on top of block B.
@@ -117,12 +94,12 @@ go(S, G) :- plan(S, G, [S], []).
 *                    block B on C, and block A on B.
 */
 test1 :- go(
-            [handempty, ontable(b, roomlocation1), ontable(c, roomlocation1), on(a, b, roomlocation1), clear(a, roomlocation1), clear(c, roomlocation1), roomlocation1],
-            [handempty, ontable(c, roomlocation1), on(b, c, roomlocation1), on(a, b, roomlocation1), clear(a, roomlocation1), roomlocation1]
+            [handempty, ontable(b, 1), ontable(c, 1), on(a, b, 1), clear(a, 1), clear(c, 1), roomlocation(1)],
+            [handempty, ontable(c, 1), on(b, c, 1), on(a, b, 1), clear(a, 1), roomlocation(1)]
             ).
 
 /**
-* test2 from Program 2 Requirements section.
+* test2 from Program 2 Requirements section: 2-room problem.
 * test2 is a 0-arity test predicate.
 * The start state is: block A, B, and C and robotic arm are all in Room 1.
 *                     Block B and C on the table and block A on top of block B.
@@ -130,12 +107,12 @@ test1 :- go(
                      block C on B, and block A on C.
 */
 test2 :- go(
-            [handempty, ontable(b, roomlocation1), ontable(c, roomlocation1), on(a, b, roomlocation1), clear(a, roomlocation1), clear(c, roomlocation1), roomlocation1],
-            [handempty, ontable(b, roomlocation2), on(c, b, roomlocation2), on(a, c, roomlocation2), clear(a, roomlocation2), roomlocation1]
+            [handempty, ontable(b, 1), ontable(c, 1), on(a, b, 1), clear(a, 1), clear(c, 1), roomlocation(1)],
+            [handempty, ontable(b, 2), on(c, b, 2), on(a, c, 2), clear(a, 2), roomlocation(1)]
             ).
 
 /**
-* test3 from Program 2 Operational Description section.
+* test3 from Program 2 Operational Description section: 2-room problem.
 * test3 is a 0-arity test predicate.
 * The start state is: robot arm in Room 1, all blocks in Room 1, with block B on the table,
 *                     and block A on B.
@@ -143,6 +120,19 @@ test2 :- go(
 *                    and block A on B.
 */
 test3 :- go(
-            [handempty, ontable(b, roomlocation1), on(a, b, roomlocation1), clear(a, roomlocation1), roomlocation1],
-            [handempty, ontable(b, roomlocation2), on(a, b, roomlocation2), clear(a, roomlocation2), roomlocation1]
+            [handempty, ontable(b, 1), on(a, b, 1), clear(a, 1), roomlocation(1)],
+            [handempty, ontable(b, 2), on(a, b, 2), clear(a, 2), roomlocation(1)]
+            ).
+
+/**
+* test4 from Program 2 Operational Description section: 2-room problem.
+* test4 is a 0-arity test predicate.
+* The start state is: robot arm in Room 1; blocks A and C are in Room 1, with block A on the table and
+*                     block C on A; blocks B and D are in Room 2, with both blocks on the table.
+* The goal state is: robot arm in Room 1; blocks A and C are in Room 2, with block A on the table and
+*                     block C on A; blocks B and D are in Room 1, with both blocks on the table.
+*/
+test4 :- go(
+            [handempty, ontable(a, 1), ontable(b, 2), on(c, a, 1), clear(c, 1), clear(b, 2), ontable(d, 1), clear(d, 1), roomlocation(1)],
+            [handempty, ontable(a, 2), ontable(b, 1), on(c, a, 2), clear(c, 2), clear(b, 1), ontable(d, 2), clear(d, 2), roomlocation(1)]
             ).
