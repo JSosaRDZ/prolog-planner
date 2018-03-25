@@ -127,10 +127,10 @@ test3 :- go(
 /**
 * test4 from Program 2 Operational Description section: 2-room problem.
 * test4 is a 0-arity test predicate.
-* The start state is: robot arm in Room 1; blocks A and C are in Room 1, with block A on the table and
-*                     block C on A; blocks B and D are in Room 2, with both blocks on the table.
-* The goal state is: robot arm in Room 1; blocks A and C are in Room 2, with block A on the table and
-*                     block C on A; blocks B and D are in Room 1, with both blocks on the table.
+* The start state is: robot arm in Room 1; blocks A, C and D are in Room 1, with blocks A and D on the table and
+*                     block C on A; block B is in Room 2 and on the table.
+* The goal state is: robot arm in Room 1; blocks A, C and D are in Room 2, with blocks A and D on the table and
+*                     block C on A; block B is in Room 1 and on the table.
 */
 test4 :- go(
             [handempty, ontable(a, 1), ontable(b, 2), on(c, a, 1), clear(c, 1), clear(b, 2), ontable(d, 1), clear(d, 1), roomlocation(1)],
