@@ -10,7 +10,7 @@
 :- module( planner,
         [
             plan/4,change_state/3,conditions_met/2,member_state/2,
-            move/3,go/2, test1/0, test2/0, test3/0
+            move/3,go/2, test1/0, test2/0, test3/0, test4/0
         ]).
 
 /* utils */
@@ -86,7 +86,7 @@ move(
 go(S, G) :- plan(S, G, [S], []).
 
 /**
-* test1 from Program 2 Requirements section.
+* test1 from Program 2 Requirements section: 1-room problem.
 * test1 is a 0-arity test predicate.
 * The start state is: block A, B, and C and robotic arm are all in Room 1.
 *                     Block B and C on the table and block A on top of block B.
@@ -99,7 +99,7 @@ test1 :- go(
             ).
 
 /**
-* test2 from Program 2 Requirements section.
+* test2 from Program 2 Requirements section: 2-room problem.
 * test2 is a 0-arity test predicate.
 * The start state is: block A, B, and C and robotic arm are all in Room 1.
 *                     Block B and C on the table and block A on top of block B.
@@ -112,7 +112,7 @@ test2 :- go(
             ).
 
 /**
-* test3 from Program 2 Operational Description section.
+* test3 from Program 2 Operational Description section: 2-room problem.
 * test3 is a 0-arity test predicate.
 * The start state is: robot arm in Room 1, all blocks in Room 1, with block B on the table,
 *                     and block A on B.
@@ -122,4 +122,17 @@ test2 :- go(
 test3 :- go(
             [handempty, ontable(b, 1), on(a, b, 1), clear(a, 1), roomlocation(1)],
             [handempty, ontable(b, 2), on(a, b, 2), clear(a, 2), roomlocation(1)]
+            ).
+
+/**
+* test4 from Program 2 Operational Description section: 2-room problem.
+* test4 is a 0-arity test predicate.
+* The start state is: robot arm in Room 1; blocks A and C are in Room 1, with block A on the table and
+*                     block C on A; blocks B and D are in Room 2, with both blocks on the table.
+* The goal state is: robot arm in Room 1; blocks A and C are in Room 2, with block A on the table and
+*                     block C on A; blocks B and D are in Room 1, with both blocks on the table.
+*/
+test4 :- go(
+            [handempty, ontable(a, 1), ontable(b, 2), on(c, a, 1), clear(c, 1), clear(b, 2), ontable(d, 1), clear(d, 1), roomlocation(1)],
+            [handempty, ontable(a, 2), ontable(b, 1), on(c, a, 2), clear(c, 2), clear(b, 1), ontable(d, 2), clear(d, 2), roomlocation(1)]
             ).
